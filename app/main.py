@@ -1,13 +1,29 @@
-from fastapi import FastAPI
-# from app.api.v1.endpoints import student
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Depends
+from sqlmodel import SQLModel, Session
 from app.core.config import settings
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # 启动时创建数据库表
+    SQLModel.metadata.create_all(settings.engine)
+    yield
+    # 关闭时可以添加清理代码
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description=settings.PROJECT_DESCRIPTION,
     version=settings.VERSION,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    lifespan=lifespan
 )
+
+
+def get_session():
+    with Session(settings.engine) as session:
+        yield session
 
 # 包含API路由
 # app.include_router(user.router, prefix=settings.API_V1_STR)
