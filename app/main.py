@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from sqlmodel import SQLModel, Session
 from app.core.config import settings
+from app.api.endpoints import common
 
 
 @asynccontextmanager
@@ -26,10 +27,11 @@ def get_session():
         yield session
 
 # 包含API路由
-# app.include_router(user.router, prefix=settings.API_V1_STR)
-# app.include_router(item.router, prefix=settings.API_V1_STR)
-# app.include_router(common.router, prefix="/common")
+app.include_router(common.router,prefix="/common")
 # app.include_router(student.router, prefix="/student")
+
+
+
 
 @app.get("/")
 def read_root():
