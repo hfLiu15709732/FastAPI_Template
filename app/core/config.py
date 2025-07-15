@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from sqlalchemy.orm import sessionmaker
 from sqlmodel import create_engine
 
 class Settings(BaseSettings):
@@ -13,7 +14,7 @@ class Settings(BaseSettings):
     MYSQL_PASSWORD: str = "123456"
     MYSQL_HOST: str = "localhost"
     MYSQL_PORT: str = "3306"
-    MYSQL_DB: str = "walt-work"
+    MYSQL_DB: str = "fastapi-template"
     DATABASE_URL: str = f"mysql+mysqldb://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}"
     
     @property
@@ -25,5 +26,16 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 settings = Settings()
+
+
+# 添加以下代码
+def get_db():
+    engine = create_engine(settings.DATABASE_URL)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
