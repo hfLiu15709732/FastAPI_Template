@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel
 import datetime
@@ -5,13 +6,15 @@ import random
 import uuid
 import pandas as pd
 import io
+from app.utils.response_models import success_response, error_response, UnifiedResponse
 
 router = APIRouter()
 
 class User(BaseModel):
-    name: str
+    username: str
     email: str
-    password: str
+    age: int
+    hobbies:List[str]
 
 # 1.最一般的get请求
 @router.get("/time")
@@ -35,15 +38,21 @@ def get_Videos(videoId: str):
     return {"originalVideoData": f"第{video_id_int}个视频信息"}
 
 # 4.POST请求----接收JSON Body
-@router.post("/user/create")
-def create_user(user: User):
-    user_data = user.dict()
-    user_data["id"] = str(uuid.uuid4())
-    user_data["created_at"] = datetime.datetime.now().isoformat()
-    return {
-        "status": "success",
-        "user": user_data
-    }
+@router.post("/user/create", response_model=UnifiedResponse)
+async def create_user(user: User):
+    try:
+        user_data = user.dict()
+        user_data["id"] = str(uuid.uuid4())
+        user_data["created_at"] = datetime.datetime.now().isoformat()
+        return success_response(
+            data=user_data,
+            message="用户创建成功"
+        )
+    except Exception as e:
+        return error_response(
+            message=f"创建用户失败: {str(e)}",
+            code=400
+        )
 
 # 5. POST请求----接收CSV文件并返回JSON
 @router.post("/upload-csv/")
