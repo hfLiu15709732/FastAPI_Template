@@ -11,9 +11,9 @@ from app.crud.admin import register_crud
 router = APIRouter()
 
 @router.post("/register")
-async def register(admin: UserCreate, db: Session = Depends(get_db)):
+async def register(admin: UserCreate):
     try:
-        admin_obj = register_crud(db, admin)
+        admin_obj = register_crud(admin)
         token_data = create_token_response(admin_obj.username)
         response_data = {
             "id": admin_obj.id,

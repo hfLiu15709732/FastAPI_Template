@@ -1,8 +1,12 @@
 from sqlalchemy.orm import Session
+
+from app.core.config import get_db
 from app.models.admin import Admin
 from app.schemas.admin import AdminCreate, AdminUpdate
 from app.schemas.auth import UserCreate
 from app.utils.security import get_password_hash
+
+db: Session = next(get_db())
 
 def get_admin_by_username(db: Session, username: str):
     return db.query(Admin).filter(Admin.username == username).first()
@@ -29,7 +33,7 @@ def create_admin(db: Session, admin: AdminCreate):
     return db_admin
 
 
-def register_crud(db: Session, admin: UserCreate):
+def register_crud(admin: UserCreate):
     # 检查用户名是否已存在
     existing_admin = get_admin_by_username(db, admin.username)
     if existing_admin:
