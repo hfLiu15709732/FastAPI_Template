@@ -7,6 +7,8 @@ class UserCreate(BaseModel):
 class UserOut(BaseModel):
     id: int
     username: str
+    access_token: str
+    token_type: str
 
     class Config:
         orm_mode = True

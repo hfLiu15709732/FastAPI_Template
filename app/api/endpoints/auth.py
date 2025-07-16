@@ -4,24 +4,26 @@ from sqlalchemy.orm import Session
 
 from app.core.auth import authenticate_user, create_token_response
 from app.core.config import get_db
-from app.schemas.auth import UserOut, UserCreate
+from app.schemas.auth import UserCreate, UserOut
 from app.utils.response_models import error_response, success_response
-from app.utils.security import get_password_hash
-from app.crud.admin import get_admin_by_username, create_admin
+from app.crud.admin import register_crud
 
 router = APIRouter()
 
-@router.post("/register", response_model=UserOut)
+@router.post("/register")
 async def register(admin: UserCreate, db: Session = Depends(get_db)):
-    if get_admin_by_username(db, admin.username):
-        raise HTTPException(status_code=400, detail="用户名已存在")
-    
-    admin_obj = create_admin(
-        db,
-        username=admin.username,
-        password=get_password_hash(admin.password)
-    )
-    return admin_obj
+    try:
+        admin_obj = register_crud(db, admin)
+        token_data = create_token_response(admin_obj.username)
+        response_data = {
+            "id": admin_obj.id,
+            "username": admin_obj.username,
+            **token_data
+        }
+        return success_response(data=UserOut(**response_data), message="注册成功")
+
+    except Exception as e:
+        return error_response(message=f"注册过程发生错误: {str(e)}", code=500)
 
 @router.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.admin import Admin
 from app.schemas.admin import AdminCreate, AdminUpdate
+from app.schemas.auth import UserCreate
 from app.utils.security import get_password_hash
 
 def get_admin_by_username(db: Session, username: str):
@@ -26,6 +27,25 @@ def create_admin(db: Session, admin: AdminCreate):
     db.commit()
     db.refresh(db_admin)
     return db_admin
+
+
+def register_crud(db: Session, admin: UserCreate):
+    # 检查用户名是否已存在
+    existing_admin = get_admin_by_username(db, admin.username)
+    if existing_admin:
+        raise ValueError(f"用户名 {admin.username} 已存在")
+
+    hashed_password = get_password_hash(admin.password)
+    db_admin = Admin(
+        username=admin.username,
+        password_hash=hashed_password,
+    )
+    db.add(db_admin)
+    db.commit()
+    db.refresh(db_admin)
+    return db_admin
+
+
 
 def update_admin(db: Session, admin_id: int, admin: AdminUpdate):
     db_admin = get_admin_by_id(db, admin_id)

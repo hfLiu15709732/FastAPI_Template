@@ -4,6 +4,7 @@ from app.crud.admin import create_admin, update_admin, delete_admin, get_admin_b
 from app.schemas.admin import AdminCreate, AdminUpdate, AdminSchema
 from app.core.config import get_db
 from app.utils.response_models import success_response, error_response
+from app.core.auth import get_current_user # 导入 get_current_user
 
 router = APIRouter()
 
@@ -72,9 +73,11 @@ def update_existing_admin(
 @router.delete("/{admin_id}")
 def delete_existing_admin(
     admin_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user) # 添加认证依赖
 ):
     try:
+        print(current_user)
         if not delete_admin(db, admin_id):
             return error_response(message="Admin not found", code=404)
         return success_response(message="Admin deleted successfully")

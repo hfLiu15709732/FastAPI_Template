@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from app.core.config import settings
 from app.api.endpoints import common,admin,auth
 
@@ -12,7 +12,6 @@ app = FastAPI(
 app.include_router(common.router,prefix="/common",tags=["通用实验"])
 app.include_router(admin.router, prefix="/admin",tags=["管理员"])
 app.include_router(auth.router, prefix="/auth",tags=["权限教研"])
-# app.include_router(student.router, prefix="/student")
 
 @app.get("/")
 def read_root():
