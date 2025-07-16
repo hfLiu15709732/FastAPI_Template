@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends
 from app.core.config import settings
-from app.api.endpoints import common,admin
+from app.api.endpoints import common,admin,auth
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -9,8 +9,9 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
 )
 # 包含API路由
-app.include_router(common.router,prefix="/common")
-app.include_router(admin.router, prefix="/admin")
+app.include_router(common.router,prefix="/common",tags=["通用实验"])
+app.include_router(admin.router, prefix="/admin",tags=["管理员"])
+app.include_router(auth.router, prefix="/auth",tags=["权限教研"])
 # app.include_router(student.router, prefix="/student")
 
 @app.get("/")

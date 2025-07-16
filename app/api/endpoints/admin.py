@@ -47,7 +47,7 @@ def create_new_admin(
             return error_response(message=f"用户名 {admin.username} 已存在", code=400)
         
         created_admin = create_admin(db, admin)
-        return success_response(data=created_admin, message="管理员创建成功")
+        return success_response(data=AdminSchema.model_validate(created_admin), message="管理员创建成功")
     except Exception as e:
         return error_response(message=str(e))
 
