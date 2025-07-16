@@ -8,7 +8,7 @@ from app.core.auth import get_current_user # 导入 get_current_user
 
 router = APIRouter()
 
-@router.get("/username/{username}")
+@router.get("/username/{username}",summary="根据用户名查询用户接口")
 def read_admin_by_username(
     username: str,
     db: Session = Depends(get_db)
@@ -22,7 +22,7 @@ def read_admin_by_username(
         return error_response(message=str(e))
 
 
-@router.get("/id/{admin_id}")
+@router.get("/id/{admin_id}",summary="根据用户id查询用户接口")
 def read_admin_by_id(
     admin_id: int,
     db: Session = Depends(get_db)
@@ -37,7 +37,7 @@ def read_admin_by_id(
 
 
 
-@router.post("/add")
+@router.post("/add",summary="创建用户接口")
 def create_new_admin(
     admin: AdminCreate,
     db: Session = Depends(get_db)
@@ -54,7 +54,7 @@ def create_new_admin(
 
 
 
-@router.put("")
+@router.put("",summary="修改用户接口")
 def update_existing_admin(
     admin: AdminUpdate,
     db: Session = Depends(get_db)
@@ -70,7 +70,7 @@ def update_existing_admin(
 
 
 
-@router.delete("/{admin_id}")
+@router.delete("/{admin_id}",summary="删除用户接口")
 def delete_existing_admin(
     admin_id: int,
     db: Session = Depends(get_db),

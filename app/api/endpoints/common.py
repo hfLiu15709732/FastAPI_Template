@@ -17,19 +17,19 @@ class User(BaseModel):
     hobbies:List[str]
 
 # 1.最一般的get请求
-@router.get("/time")
+@router.get("/time",summary="最一般的get请求")
 def get_server_time():
     return {"server_time": datetime.datetime.now()}
 
 # 2.get请求---接收queryparam参数
-@router.get("/random")
+@router.get("/random",summary="get请求---接收queryparam参数")
 def generate_random_number(min: int = 0, max: int = 100):
     if min > max:
         raise HTTPException(status_code=400, detail="最小值不能大于最大值")
     return {"random_number": random.randint(min, max)}
 
 # 3.get请求---接收动态路由参数
-@router.get("/videos/{videoId}")
+@router.get("/videos/{videoId}",summary="get请求---接收动态路由参数")
 def get_Videos(videoId: str):
     try:
         video_id_int = int(videoId)
@@ -38,7 +38,7 @@ def get_Videos(videoId: str):
     return {"originalVideoData": f"第{video_id_int}个视频信息"}
 
 # 4.POST请求----接收JSON Body
-@router.post("/user/create", response_model=UnifiedResponse)
+@router.post("/user/create", response_model=UnifiedResponse,summary="POST请求----接收JSON Body")
 async def create_user(user: User):
     try:
         user_data = user.dict()
@@ -55,7 +55,7 @@ async def create_user(user: User):
         )
 
 # 5. POST请求----接收CSV文件并返回JSON
-@router.post("/upload-csv/")
+@router.post("/upload-csv/",summary="POST请求----接收CSV文件并返回JSON")
 async def upload_csv(file: UploadFile = File(...)):
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="文件类型不正确，请上传CSV文件")
@@ -74,7 +74,7 @@ async def upload_csv(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"处理文件时发生错误: {e}")
 
-@router.post("/upload-file/")
+@router.post("/upload-file/",summary="POST请求----接收通用文件并返回JSON")
 async def upload_file(file: UploadFile = File(...)):
     """
     上传文件接口，支持CSV、TXT和Excel格式（暂时项目未引用openpyxl，所有暂时不能使用）

@@ -9,13 +9,10 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
 )
 # 包含API路由
-app.include_router(common.router,prefix="/common",tags=["通用实验"])
+app.include_router(common.router,prefix="/common",tags=["通用试验"])
 app.include_router(admin.router, prefix="/admin",tags=["管理员"])
-app.include_router(auth.router, prefix="/auth",tags=["权限教研"])
+app.include_router(auth.router, prefix="/auth",tags=["权限校验"])
 
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to FastAPI Projectuuuu"}
 
 if __name__ == "__main__":
     import uvicorn

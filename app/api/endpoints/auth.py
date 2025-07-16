@@ -10,7 +10,7 @@ from app.crud.admin import register_crud
 
 router = APIRouter()
 
-@router.post("/register")
+@router.post("/register",summary="系统注册接口")
 async def register(admin: UserCreate):
     try:
         admin_obj = register_crud(admin)
@@ -25,7 +25,7 @@ async def register(admin: UserCreate):
     except Exception as e:
         return error_response(message=f"注册过程发生错误: {str(e)}", code=500)
 
-@router.post("/login")
+@router.post("/login",summary="系统登录接口")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     try:
         # 尝试认证用户
